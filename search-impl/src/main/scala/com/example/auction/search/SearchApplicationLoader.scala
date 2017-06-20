@@ -6,12 +6,14 @@ import com.example.auction.search.api.SearchService
 import com.example.auction.search.impl.{ BrokerEventConsumer, SearchServiceImpl }
 import com.example.elasticsearch.response.SearchResult
 import com.example.elasticsearch.{ ElasticSearchIndexedStore, Elasticsearch }
+import com.lightbend.lagom.internal.client.CircuitBreakerMetricsProviderImpl
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.server.status.MetricsServiceComponents
 import com.lightbend.lagom.scaladsl.server.{ LagomApplication, LagomApplicationContext, LagomApplicationLoader, LagomServer }
 import com.softwaremill.macwire._
+//import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 
 abstract class SearchApplication(context: LagomApplicationContext) extends LagomApplication(context)
@@ -37,6 +39,18 @@ class SearchApplicationLoader extends LagomApplicationLoader {
     new SearchApplication(context) {
       override def serviceLocator = ServiceLocator.NoServiceLocator
     }
+
+
+  /*
+  //Comment out the load method above, and uncomment this code block to allow this application to use ConductR's
+  //service locator in production mode.
+
+  override def load(context: LagomApplicationContext) =
+    new SearchApplication(context) with ConductRApplicationComponents {
+      override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
+    }
+
+  */
 
   override def loadDevMode(context: LagomApplicationContext) =
     new SearchApplication(context) with LagomDevModeComponents

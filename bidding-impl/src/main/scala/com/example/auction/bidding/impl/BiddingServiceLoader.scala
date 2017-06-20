@@ -2,12 +2,14 @@ package com.example.auction.bidding.impl
 
 import com.example.auction.bidding.api.BiddingService
 import com.example.auction.item.api.ItemService
+import com.lightbend.lagom.internal.client.CircuitBreakerMetricsProviderImpl
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
+//import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 
 abstract class BiddingApplication(context: LagomApplicationContext) extends LagomApplication(context)
@@ -27,10 +29,24 @@ abstract class BiddingApplication(context: LagomApplicationContext) extends Lago
 }
 
 class BiddingApplicationLoader extends LagomApplicationLoader {
+
   override def load(context: LagomApplicationContext) =
     new BiddingApplication(context) {
       override def serviceLocator = ServiceLocator.NoServiceLocator
     }
+
+  /*
+
+  //Comment out the load method above, and uncomment this code block to allow this application to use ConductR's
+  //service locator in production mode.
+
+  override def load(context: LagomApplicationContext) =
+    new BiddingApplication(context) with ConductRApplicationComponents {
+      override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
+    }
+
+  */
+
 
   override def loadDevMode(context: LagomApplicationContext) =
     new BiddingApplication(context) with LagomDevModeComponents
