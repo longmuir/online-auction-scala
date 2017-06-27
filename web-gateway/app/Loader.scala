@@ -6,9 +6,10 @@ import com.lightbend.lagom.scaladsl.api.{ServiceLocator, ServiceAcl, ServiceInfo
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.softwaremill.macwire._
-//import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
+import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
 import controllers.{ Assets, ItemController, Main, ProfileController }
 import play.api.ApplicationLoader.Context
+import play.api.http.HttpConfiguration
 import play.api.i18n.I18nComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ ApplicationLoader, BuiltInComponentsFromContext, Mode }
@@ -29,9 +30,12 @@ abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext
     )
   )
   override implicit lazy val executionContext: ExecutionContext = actorSystem.dispatcher
+
   override lazy val router = {
-    val prefix = "/"
-    wire[Routes]
+    // add the prefix string in local scope for the Routes constructor
+    lazy val prefix = "/"
+    // ensures the config value play.http.context gets picked up
+    wire[Routes] withPrefix HttpConfiguration.fromConfiguration(context.initialConfiguration).context
   }
 
   lazy val userService = serviceClient.implement[UserService]
@@ -55,13 +59,11 @@ class WebGatewayLoader extends ApplicationLoader {
         override def serviceLocator = ServiceLocator.NoServiceLocator
       }.application
 
-      /*
-
       //Comment out the above case, and uncomment the following case block to connect to ConductR's service locator in Prod mode:
-      case _ =>    (new WebGateway(context) with ConductRApplicationComponents {
-            override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
-          }).application
-      */
+//      case _ =>    (new WebGateway(context) with ConductRApplicationComponents {
+//            override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
+//          }).application
+
     }
 
   }
