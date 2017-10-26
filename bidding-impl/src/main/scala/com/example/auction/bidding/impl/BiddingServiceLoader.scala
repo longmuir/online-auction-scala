@@ -9,7 +9,6 @@ import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
-//import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 
 abstract class BiddingApplication(context: LagomApplicationContext) extends LagomApplication(context)
@@ -34,19 +33,6 @@ class BiddingApplicationLoader extends LagomApplicationLoader {
     new BiddingApplication(context) {
       override def serviceLocator = ServiceLocator.NoServiceLocator
     }
-
-  /*
-
-  //Comment out the load method above, and uncomment this code block to allow this application to use ConductR's
-  //service locator in production mode.
-
-  override def load(context: LagomApplicationContext) =
-    new BiddingApplication(context) with ConductRApplicationComponents {
-      override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
-    }
-
-  */
-
 
   override def loadDevMode(context: LagomApplicationContext) =
     new BiddingApplication(context) with LagomDevModeComponents

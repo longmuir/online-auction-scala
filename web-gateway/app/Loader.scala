@@ -6,7 +6,6 @@ import com.lightbend.lagom.scaladsl.api.{ServiceLocator, ServiceAcl, ServiceInfo
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.softwaremill.macwire._
-import com.typesafe.conductr.bundlelib.lagom.scaladsl.ConductRApplicationComponents
 import controllers.{ Assets, ItemController, Main, ProfileController }
 import play.api.ApplicationLoader.Context
 import play.api.http.HttpConfiguration
@@ -14,6 +13,8 @@ import play.api.i18n.I18nComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ ApplicationLoader, BuiltInComponentsFromContext, Mode }
 import router.Routes
+import com.lightbend.lagom.scaladsl.dns.DnsServiceLocatorComponents
+
 
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext
@@ -58,11 +59,6 @@ class WebGatewayLoader extends ApplicationLoader {
       case _ => new WebGateway(context)  {
         override def serviceLocator = ServiceLocator.NoServiceLocator
       }.application
-
-      //Comment out the above case, and uncomment the following case block to connect to ConductR's service locator in Prod mode:
-//      case _ =>    (new WebGateway(context) with ConductRApplicationComponents {
-//            override lazy val circuitBreakerMetricsProvider = new CircuitBreakerMetricsProviderImpl(actorSystem)
-//          }).application
 
     }
 
