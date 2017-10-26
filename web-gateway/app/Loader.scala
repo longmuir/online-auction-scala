@@ -13,8 +13,6 @@ import play.api.i18n.I18nComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ ApplicationLoader, BuiltInComponentsFromContext, Mode }
 import router.Routes
-import com.lightbend.lagom.scaladsl.dns.DnsServiceLocatorComponents
-
 
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext
